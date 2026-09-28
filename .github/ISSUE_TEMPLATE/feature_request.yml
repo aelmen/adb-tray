@@ -1,0 +1,21 @@
+name: Funktionsönskemål
+description: Föreslå en ny funktion eller förbättring
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Vilket problem vill du lösa?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Förslag
+      description: Hur skulle det kunna fungera i menyn?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativ du har övervägt

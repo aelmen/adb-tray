@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """System tray icon for adb devices and scrcpy mirroring (Cinnamon / XApp)."""
+import contextlib
 import fcntl
 import json
 import re
@@ -31,7 +32,7 @@ SCRCPY_OPTS = ["-m", "1600", "--stay-awake"]
 def adb(*args, serial=None, timeout=15):
     cmd = ["adb"] + (["-s", serial] if serial else []) + list(args)
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, check=False)
         return r.returncode, (r.stdout + r.stderr).strip()
     except subprocess.TimeoutExpired:
         return 1, "timeout"
@@ -63,10 +64,8 @@ def list_devices():
 
 def load_hosts():
     hosts = []
-    try:
+    with contextlib.suppress(OSError, ValueError):
         hosts = json.loads(HOSTS_FILE.read_text())
-    except (OSError, ValueError):
-        pass
     if LEGACY_IP_FILE.exists():
         legacy = f"{LEGACY_IP_FILE.read_text().strip()}:{TCP_PORT}"
         if legacy not in hosts:
@@ -215,7 +214,7 @@ class Tray:
         serial = dev["serial"]
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)
         log = CONFIG_DIR / f"scrcpy-{re.sub(r'[^A-Za-z0-9]', '_', serial)}.log"
-        cmd = ["scrcpy", "-s", serial, "--window-title", dev["model"] or serial] + SCRCPY_OPTS
+        cmd = ["scrcpy", "-s", serial, "--window-title", dev["model"] or serial, *SCRCPY_OPTS]
         if dev["wifi"]:
             cmd += ["-b", "6M"]
         with open(log, "w") as fh:
@@ -248,9 +247,9 @@ class Tray:
     @staticmethod
     def screenshot(dev):
         pictures = Path(GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES) or Path.home())
-        target = pictures / f"{dev['model'] or 'android'}-{datetime.now():%Y%m%d-%H%M%S}.png"
+        target = pictures / f"{dev['model'] or 'android'}-{datetime.now().astimezone():%Y%m%d-%H%M%S}.png"
         r = subprocess.run(["adb", "-s", dev["serial"], "exec-out", "screencap", "-p"],
-                           capture_output=True, timeout=30)
+                           capture_output=True, timeout=30, check=False)
         if r.returncode != 0 or not r.stdout:
             notify("Skärmdumpen misslyckades")
             return
@@ -341,7 +340,8 @@ def main():
         print("adb saknas", file=sys.stderr)
         sys.exit(1)
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    lock = open(CONFIG_DIR / "tray.lock", "w")
+    # Kept open for the process lifetime; the flock is the single-instance guard.
+    lock = open(CONFIG_DIR / "tray.lock", "w")  # noqa: SIM115
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:

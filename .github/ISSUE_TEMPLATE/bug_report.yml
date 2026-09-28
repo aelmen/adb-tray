@@ -1,0 +1,44 @@
+name: Buggrapport
+description: Något fungerar inte som det ska
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Vad hände?
+      description: Beskriv vad du gjorde, vad du förväntade dig och vad som hände.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steg för att återskapa
+      placeholder: |
+        1. Anslut enheten via USB
+        2. Välj "Spegla skärmen"
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: desktop
+    attributes:
+      label: Distribution och Cinnamon-version
+      placeholder: Linux Mint 22.2, Cinnamon 6.4
+    validations:
+      required: true
+  - type: input
+    id: tools
+    attributes:
+      label: adb- och scrcpy-version
+      placeholder: "adb 1.0.41, scrcpy 3.3.4"
+  - type: input
+    id: device
+    attributes:
+      label: Enhet och Android-version
+      placeholder: Samsung SM-X210, Android 16
+  - type: textarea
+    id: logs
+    attributes:
+      label: Loggar
+      description: Utskrift från `./adb-tray.py` eller innehållet i `~/.config/adb-tray/scrcpy-*.log`.
+      render: text

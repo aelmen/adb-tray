@@ -1,0 +1,7 @@
+line-length = 120
+target-version = "py310"
+
+[lint]
+select = ["E", "F", "W", "B", "UP", "SIM", "PLW", "RUF"]
+# En dashes are intentional in Swedish UI strings.
+ignore = ["RUF001"]

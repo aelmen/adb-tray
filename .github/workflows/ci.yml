@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install tools
+        run: pip install ruff
+
+      - name: Ruff
+        run: ruff check adb-tray.py
+
+      - name: Compile
+        run: python -m py_compile adb-tray.py
+
+      - name: ShellCheck
+        run: shellcheck install.sh uninstall.sh
+
+      - name: Desktop file template
+        run: |
+          sudo apt-get install -y --no-install-recommends desktop-file-utils
+          sed 's|@EXEC@|/usr/local/bin/adb-tray|' adb-tray.desktop.in > /tmp/adb-tray.desktop
+          desktop-file-validate /tmp/adb-tray.desktop
