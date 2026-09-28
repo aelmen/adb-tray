@@ -18,8 +18,7 @@ Built for Linux Mint / Cinnamon, on top of [`adb`](https://developer.android.com
         └─ Quit
 ```
 
-> **Note:** the menu is currently in Swedish. This README uses English names with the Swedish label in
-> parentheses the first time it appears, e.g. *Mirror screen* (*Spegla skärmen*).
+> The menu follows your desktop language. English is the default; see [Languages](#languages).
 
 ## Contents
 
@@ -27,6 +26,7 @@ Built for Linux Mint / Cinnamon, on top of [`adb`](https://developer.android.com
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Getting started](#getting-started)
+- [Languages](#languages)
 - [Configuration and files](#configuration-and-files)
 - [Troubleshooting](#troubleshooting)
 - [Uninstall](#uninstall)
@@ -48,7 +48,7 @@ Built for Linux Mint / Cinnamon, on top of [`adb`](https://developer.android.com
 - Linux Mint / Cinnamon (the icon uses `XApp.StatusIcon`). Other desktops with StatusNotifier support via
   `xapp-sn-watcher` should work but are untested.
 - Python 3 with PyGObject
-- Packages: `adb`, `scrcpy`, `python3-gi`, `gir1.2-gtk-3.0`, `gir1.2-xapp-1.0`, `libnotify-bin`
+- Packages: `adb`, `scrcpy`, `python3-gi`, `gir1.2-gtk-3.0`, `gir1.2-xapp-1.0`, `libnotify-bin`, `gettext`
 
 ## Installation
 
@@ -63,7 +63,8 @@ cd adb-tray
 The installer
 
 - copies the program to `~/.local/bin/adb-tray`
-- adds **ADB-enheter** to the application menu
+- compiles the translations to `~/.local/share/locale/<lang>/LC_MESSAGES/adb-tray.mo`
+- adds **ADB Devices** to the application menu
 - starts the program at login (skip with `NO_AUTOSTART=1 ./install.sh`)
 - starts the icon right away
 
@@ -77,25 +78,44 @@ Run `./install.sh` again after `git pull` to update.
    unlock developer options.
 2. **Developer options → USB debugging** – turn it on.
 3. Plug in the cable and tap **Allow** in the dialog on the device (ticking *Always allow* is recommended).
-4. The device appears in the menu. Choose **Mirror screen** (*Spegla skärmen*).
+4. The device appears in the menu. Choose **Mirror screen**.
 
 ### Over Wi-Fi, no cable at all
 
 1. **Developer options → Wireless debugging** – turn it on and choose *Pair device with pairing code*.
-2. In the menu: **Connect via Wi-Fi → Pair (wireless debugging)…**
-   (*Anslut via Wi-Fi → Para ihop (trådlös felsökning)…*) and enter the pairing address, the code and,
-   optionally, the connection address shown under *Wireless debugging*.
+2. In the menu: **Connect via Wi-Fi → Pair (wireless debugging)...** and enter the pairing address, the code
+   and, optionally, the connection address shown under *Wireless debugging*.
 
 ### Over Wi-Fi after USB
 
-Choose **Switch to Wi-Fi** (*Växla till Wi-Fi*) on a USB-connected device. The address is saved and can be
+Choose **Switch to Wi-Fi** on a USB-connected device. The address is saved and can be
 picked under *Connect via Wi-Fi* next time. This mode lasts until the device reboots.
+
+## Languages
+
+The menu, dialogs, notifications and the application-menu entry use the same language as your desktop,
+selected through the standard `LANGUAGE`, `LC_ALL`, `LC_MESSAGES` and `LANG` environment variables.
+If no translation exists for your language, English is used.
+
+| Language | Status |
+| --- | --- |
+| English | built in |
+| Swedish (`sv`) | complete |
+
+To try another language without changing your desktop settings:
+
+```bash
+pkill -f 'adb-tray$'; LANGUAGE=sv adb-tray &
+```
+
+New translations are very welcome – see [Translations](CONTRIBUTING.md#translations).
 
 ## Configuration and files
 
 | Path | Contents |
 | --- | --- |
 | `~/.local/bin/adb-tray` | The program |
+| `~/.local/share/locale/*/LC_MESSAGES/adb-tray.mo` | Compiled translations |
 | `~/.config/adb-tray/hosts.json` | Recently used Wi-Fi addresses (max 10) |
 | `~/.config/adb-tray/scrcpy-*.log` | Output of the latest mirroring session per device |
 | `~/.config/autostart/adb-tray.desktop` | Autostart at login |
@@ -108,10 +128,11 @@ at the top of `adb-tray.py`.
 | Symptom | Fix |
 | --- | --- |
 | No icon is shown | Make sure the *Xapp Status Applet* is in your panel. Run `adb-tray` in a terminal and read the output. |
-| Device is shown as *godkänn på enheten* (authorize on device) | Tap **Allow** in the dialog on the device. If no dialog appears, choose *Revoke USB debugging authorizations* in developer options and reconnect. |
+| Device is shown as *authorize on device* | Tap **Allow** in the dialog on the device. If no dialog appears, choose *Revoke USB debugging authorizations* in developer options and reconnect. |
 | Mirroring closes immediately | Read `~/.config/adb-tray/scrcpy-*.log`. Some devices cannot encode full resolution – lower `-m` in `SCRCPY_OPTS`. |
 | Wi-Fi connection fails | The device has probably rebooted. Connect over USB and choose *Switch to Wi-Fi* again, or use pairing. |
-| Everything seems stuck | Choose **Restart adb server** (*Starta om adb-server*) in the menu. |
+| Everything seems stuck | Choose **Restart adb server** in the menu. |
+| The menu is in English although my desktop is not | Your language has no translation yet, or `gettext` was missing during install. Run `./install.sh --deps`. |
 | `Failed to load module "xapp-gtk3-module"` | Harmless message, can be ignored. |
 
 ## Uninstall
