@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=ADB-enheter
+Comment=Ikon i systemfältet för adb-enheter och scrcpy-spegling
+Exec=@EXEC@
+Icon=scrcpy
+Terminal=false
+Categories=Utility;
+X-GNOME-Autostart-enabled=true
