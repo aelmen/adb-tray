@@ -1,0 +1,161 @@
+# Swedish translations for adb-tray.
+# Copyright (C) 2026 Anders Elmén
+# This file is distributed under the same license as the adb-tray package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: adb-tray\n"
+"Report-Msgid-Bugs-To: https://github.com/aelmen/adb-tray/issues\n"
+"POT-Creation-Date: 2026-09-28 18:06+0200\n"
+"PO-Revision-Date: 2026-09-28 18:06+0200\n"
+"Last-Translator: Anders Elmén\n"
+"Language-Team: Swedish\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "ADB Devices"
+msgstr "ADB-enheter"
+
+#, python-brace-format
+msgid "Connected to {host}"
+msgstr "Ansluten till {host}"
+
+#, python-brace-format
+msgid "Could not connect to {host}"
+msgstr "Kunde inte ansluta till {host}"
+
+#, python-brace-format
+msgid "{n} device connected"
+msgid_plural "{n} devices connected"
+msgstr[0] "{n} enhet ansluten"
+msgstr[1] "{n} enheter anslutna"
+
+#, python-brace-format
+msgid "{n} mirroring"
+msgid_plural "{n} mirroring"
+msgstr[0] "{n} speglas"
+msgstr[1] "{n} speglas"
+
+msgid "No devices connected"
+msgstr "Inga enheter anslutna"
+
+msgid "Connect via Wi-Fi"
+msgstr "Anslut via Wi-Fi"
+
+msgid "New address..."
+msgstr "Ny adress…"
+
+msgid "Pair (wireless debugging)..."
+msgstr "Para ihop (trådlös felsökning)…"
+
+msgid "Refresh"
+msgstr "Uppdatera"
+
+msgid "Restart adb server"
+msgstr "Starta om adb-server"
+
+msgid "Quit"
+msgstr "Avsluta"
+
+msgid "authorize on device"
+msgstr "godkänn på enheten"
+
+msgid "offline"
+msgstr "offline"
+
+msgid "Stop mirroring"
+msgstr "Stoppa spegling"
+
+msgid "Mirror screen"
+msgstr "Spegla skärmen"
+
+msgid "Lock portrait"
+msgstr "Lås porträtt"
+
+msgid "Lock landscape"
+msgstr "Lås landskap"
+
+msgid "Auto-rotate"
+msgstr "Autorotation"
+
+msgid "Screenshot"
+msgstr "Skärmdump"
+
+msgid "Open adb shell"
+msgstr "Öppna adb shell"
+
+msgid "Disconnect"
+msgstr "Koppla från"
+
+msgid "Switch to Wi-Fi"
+msgstr "Växla till Wi-Fi"
+
+msgid "Tap 'Allow' in the dialog on the device"
+msgstr "Tryck på 'Tillåt' i dialogen på enheten"
+
+#, python-brace-format
+msgid "Serial number: {serial}"
+msgstr "Serienummer: {serial}"
+
+#, python-brace-format
+msgid "scrcpy exited with an error ({code}). See {log}"
+msgstr "scrcpy avslutades med fel ({code}). Se {log}"
+
+msgid "Screenshot failed"
+msgstr "Skärmdumpen misslyckades"
+
+#, python-brace-format
+msgid "Screenshot saved: {path}"
+msgstr "Skärmdump sparad: {path}"
+
+msgid "No terminal emulator found"
+msgstr "Hittar ingen terminal"
+
+msgid "The device does not seem to be connected to Wi-Fi"
+msgstr "Enheten verkar inte vara ansluten till Wi-Fi"
+
+#, python-brace-format
+msgid "Disconnected: {serial}"
+msgstr "Frånkopplad: {serial}"
+
+msgid "The adb server has been restarted"
+msgstr "adb-servern har startats om"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Address (IP:port)"
+msgstr "Adress (IP:port)"
+
+msgid "Pair - wireless debugging"
+msgstr "Para ihop – trådlös felsökning"
+
+msgid "Pairing address (IP:port)"
+msgstr "Parningsadress (IP:port)"
+
+msgid "Pairing code"
+msgstr "Parningskod"
+
+msgid "Connection address (optional)"
+msgstr "Anslutningsadress (valfri)"
+
+msgid "Pairing failed"
+msgstr "Parningen misslyckades"
+
+msgid "Pairing succeeded"
+msgstr "Parningen lyckades"
+
+msgid "adb is not installed"
+msgstr "adb saknas"
+
+msgid "adb-tray is already running"
+msgstr "adb-tray körs redan"
+
+msgid "System tray icon for adb devices and scrcpy screen mirroring"
+msgstr "Ikon i systemfältet för adb-enheter och scrcpy-spegling"

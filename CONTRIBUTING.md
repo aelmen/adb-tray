@@ -22,7 +22,7 @@ before you spend time on it.
 ## Development setup
 
 ```bash
-sudo apt install adb scrcpy python3-gi gir1.2-gtk-3.0 gir1.2-xapp-1.0 libnotify-bin shellcheck
+sudo apt install adb scrcpy python3-gi gir1.2-gtk-3.0 gir1.2-xapp-1.0 libnotify-bin gettext shellcheck
 pipx install ruff        # or: python3 -m venv .venv && .venv/bin/pip install ruff
 
 git clone https://github.com/<your-account>/adb-tray.git
@@ -36,7 +36,8 @@ pkill -f 'adb-tray(\.py)?$'   # stop an installed instance, if any
 ./adb-tray.py
 ```
 
-Only one instance can run at a time (lock file `~/.config/adb-tray/tray.lock`).
+Only one instance can run at a time (lock file `~/.config/adb-tray/tray.lock`). Translations are loaded from
+`~/.local/share/locale`, so run `./install.sh` once to see them when running from source.
 
 ## Checks
 
@@ -45,7 +46,8 @@ The same checks run in CI on every pull request:
 ```bash
 ruff check adb-tray.py
 python3 -m py_compile adb-tray.py
-shellcheck install.sh uninstall.sh
+shellcheck install.sh uninstall.sh po/update.sh
+po/update.sh --check
 ```
 
 Also test manually in Cinnamon with at least one real device:
@@ -62,8 +64,36 @@ Also test manually in Cinnamon with at least one real device:
   `run_bg`, and results are handed back with `GLib.idle_add`.
 - Call external programs with argument lists (`subprocess.run([...])`), never through a shell with
   concatenated strings.
-- UI strings are currently in Swedish. Code, comments, commit messages and documentation are in English.
+- User-visible strings are written in English and wrapped for translation: `_("Mirror screen")`, with
+  named placeholders (`_("Connected to {host}").format(host=host)`) and `ngettext` for plurals. Keep
+  source strings ASCII-only. After changing strings, run `po/update.sh` and update the translations you can.
+- Code, comments, commit messages and documentation are in English.
 - Comment *why*, not *what*. Lint rules are defined in `ruff.toml`.
+
+## Translations
+
+Translations use GNU gettext and live in `po/`:
+
+| File | Purpose |
+| --- | --- |
+| `po/adb-tray.pot` | Template with every translatable string (generated) |
+| `po/<lang>.po` | One file per language, e.g. `po/sv.po` |
+| `po/LINGUAS` | List of languages, one code per line |
+| `po/update.sh` | Regenerates the template and merges it into every `.po` file |
+
+To add a language, for example German:
+
+```bash
+msginit --no-translator -l de_DE.UTF-8 -i po/adb-tray.pot -o po/de.po
+echo de >> po/LINGUAS
+# translate po/de.po with a text editor or a tool like Poedit
+./install.sh
+LANGUAGE=de adb-tray
+```
+
+The language code must match what gettext looks up (`de`, `pt_BR`, `nb`, ...). Keep placeholders such as
+`{host}` unchanged, and remove any `#, fuzzy` marker once an entry is correct. CI fails if a translation
+has untranslated or fuzzy entries, or if `po/adb-tray.pot` is out of date.
 
 ## Commit messages
 
