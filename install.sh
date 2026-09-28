@@ -24,7 +24,9 @@ if [[ "${NO_AUTOSTART:-0}" != "1" ]]; then
     cp "$APP_DIR/adb-tray.desktop" "$AUTOSTART_DIR/adb-tray.desktop"
 fi
 
-command -v update-desktop-database >/dev/null && update-desktop-database "$APP_DIR" 2>/dev/null || true
+if command -v update-desktop-database >/dev/null; then
+    update-desktop-database "$APP_DIR" 2>/dev/null || true
+fi
 
 pkill -f "adb-tray(\.py)?$" 2>/dev/null || true
 sleep 1
