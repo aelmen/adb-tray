@@ -3,49 +3,52 @@
 [![CI](https://github.com/aelmen/adb-tray/actions/workflows/ci.yml/badge.svg)](https://github.com/aelmen/adb-tray/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**En ikon vid klockan för dina Android-enheter.** Högerklicka för att se anslutna enheter, spegla skärmen,
-rotera, ta skärmdumpar eller ansluta trådlöst – utan att öppna en terminal.
+**A system tray icon for your Android devices.** Right-click to list connected devices, mirror the screen,
+rotate, take screenshots or connect wirelessly – without opening a terminal.
 
-Byggt för Linux Mint / Cinnamon, ovanpå [`adb`](https://developer.android.com/tools/adb) och
+Built for Linux Mint / Cinnamon, on top of [`adb`](https://developer.android.com/tools/adb) and
 [`scrcpy`](https://github.com/Genymobile/scrcpy).
 
 ```text
-[ikon] ─┬─ SM-X210  (USB)       ─┬─ Spegla skärmen
-        ├─ ▶ SM-X210  (Wi-Fi)    ├─ Lås porträtt / Lås landskap / Autorotation
-        ├─ Anslut via Wi-Fi  ►   ├─ Skärmdump
-        ├─ Uppdatera             ├─ Öppna adb shell
-        ├─ Starta om adb-server  └─ Växla till Wi-Fi / Koppla från
-        └─ Avsluta
+[icon] ─┬─ SM-X210  (USB)        ─┬─ Mirror screen
+        ├─ ▶ SM-X210  (Wi-Fi)     ├─ Lock portrait / Lock landscape / Auto-rotate
+        ├─ Connect via Wi-Fi  ►   ├─ Screenshot
+        ├─ Refresh                ├─ Open adb shell
+        ├─ Restart adb server     └─ Switch to Wi-Fi / Disconnect
+        └─ Quit
 ```
 
-## Innehåll
+> **Note:** the menu is currently in Swedish. This README uses English names with the Swedish label in
+> parentheses the first time it appears, e.g. *Mirror screen* (*Spegla skärmen*).
 
-- [Funktioner](#funktioner)
-- [Krav](#krav)
+## Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
 - [Installation](#installation)
-- [Kom igång](#kom-igång)
-- [Konfiguration och filer](#konfiguration-och-filer)
-- [Felsökning](#felsökning)
-- [Avinstallation](#avinstallation)
-- [Bidra](#bidra)
-- [Licens](#licens)
+- [Getting started](#getting-started)
+- [Configuration and files](#configuration-and-files)
+- [Troubleshooting](#troubleshooting)
+- [Uninstall](#uninstall)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Funktioner
+## Features
 
-| Område | Vad du kan göra |
+| Area | What you can do |
 | --- | --- |
-| Enheter | Listar USB- och Wi-Fi-enheter med modellnamn, uppdateras var 4:e sekund. Visar om en enhet väntar på godkännande eller är offline. |
-| Spegling | Starta/stoppa `scrcpy` per enhet. Pågående spegling markeras med ▶. Flera enheter kan speglas samtidigt. |
-| Rotation | Lås porträtt, lås landskap eller återställ autorotation – även under pågående spegling. |
-| Verktyg | Skärmdump till bildmappen, `adb shell` i en terminal, omstart av adb-servern. |
-| Wi-Fi | *Växla till Wi-Fi* från en USB-ansluten enhet, anslut till tidigare adresser eller en ny adress, eller parning via Androids **Trådlös felsökning**. |
+| Devices | Lists USB and Wi-Fi devices with model names, refreshed every 4 seconds. Shows when a device is waiting for authorization or is offline. |
+| Mirroring | Start/stop `scrcpy` per device. Active mirrors are marked with ▶. Several devices can be mirrored at once. |
+| Rotation | Lock portrait, lock landscape or restore auto-rotate – also while mirroring. |
+| Tools | Screenshot to your Pictures folder, `adb shell` in a terminal, restart the adb server. |
+| Wi-Fi | *Switch to Wi-Fi* from a USB-connected device, reconnect to previous addresses or a new one, or pair using Android's **Wireless debugging**. |
 
-## Krav
+## Requirements
 
-- Linux Mint / Cinnamon (ikonen använder `XApp.StatusIcon`). Andra skrivbord med StatusNotifier-stöd via
-  `xapp-sn-watcher` bör fungera men är inte testade.
-- Python 3 med PyGObject
-- Paket: `adb`, `scrcpy`, `python3-gi`, `gir1.2-gtk-3.0`, `gir1.2-xapp-1.0`, `libnotify-bin`
+- Linux Mint / Cinnamon (the icon uses `XApp.StatusIcon`). Other desktops with StatusNotifier support via
+  `xapp-sn-watcher` should work but are untested.
+- Python 3 with PyGObject
+- Packages: `adb`, `scrcpy`, `python3-gi`, `gir1.2-gtk-3.0`, `gir1.2-xapp-1.0`, `libnotify-bin`
 
 ## Installation
 
@@ -55,74 +58,75 @@ cd adb-tray
 ./install.sh --deps
 ```
 
-`--deps` installerar paketen ovan med `apt` (kräver sudo). Utelämna flaggan om de redan finns.
+`--deps` installs the packages above with `apt` (requires sudo). Leave it out if they are already installed.
 
-Installationen
+The installer
 
-- kopierar programmet till `~/.local/bin/adb-tray`
-- lägger till **ADB-enheter** i programmenyn
-- startar programmet vid inloggning (hoppa över med `NO_AUTOSTART=1 ./install.sh`)
-- startar ikonen direkt
+- copies the program to `~/.local/bin/adb-tray`
+- adds **ADB-enheter** to the application menu
+- starts the program at login (skip with `NO_AUTOSTART=1 ./install.sh`)
+- starts the icon right away
 
-Kör `./install.sh` igen efter `git pull` för att uppdatera.
+Run `./install.sh` again after `git pull` to update.
 
-## Kom igång
+## Getting started
 
-### Via USB
+### Over USB
 
-1. På enheten: **Inställningar → Om enheten → Programvaruinformation**, tryck sju gånger på
-   *Versionsnummer* för att låsa upp utvecklaralternativ.
-2. **Utvecklaralternativ → USB-felsökning** – slå på.
-3. Anslut kabeln och tryck **Tillåt** i dialogen på enheten (bocka gärna i *Tillåt alltid*).
-4. Enheten dyker upp i menyn. Välj **Spegla skärmen**.
+1. On the device: **Settings → About device → Software information**, tap *Build number* seven times to
+   unlock developer options.
+2. **Developer options → USB debugging** – turn it on.
+3. Plug in the cable and tap **Allow** in the dialog on the device (ticking *Always allow* is recommended).
+4. The device appears in the menu. Choose **Mirror screen** (*Spegla skärmen*).
 
-### Via Wi-Fi, helt utan kabel
+### Over Wi-Fi, no cable at all
 
-1. **Utvecklaralternativ → Trådlös felsökning** – slå på och välj *Para ihop enhet med parningskod*.
-2. I menyn: **Anslut via Wi-Fi → Para ihop (trådlös felsökning)…** och fyll i parningsadress, kod och
-   (valfritt) anslutningsadressen som visas under *Trådlös felsökning*.
+1. **Developer options → Wireless debugging** – turn it on and choose *Pair device with pairing code*.
+2. In the menu: **Connect via Wi-Fi → Pair (wireless debugging)…**
+   (*Anslut via Wi-Fi → Para ihop (trådlös felsökning)…*) and enter the pairing address, the code and,
+   optionally, the connection address shown under *Wireless debugging*.
 
-### Via Wi-Fi efter USB
+### Over Wi-Fi after USB
 
-Välj **Växla till Wi-Fi** på en USB-ansluten enhet. Adressen sparas och kan väljas under
-*Anslut via Wi-Fi* nästa gång. Läget gäller tills enheten startas om.
+Choose **Switch to Wi-Fi** (*Växla till Wi-Fi*) on a USB-connected device. The address is saved and can be
+picked under *Connect via Wi-Fi* next time. This mode lasts until the device reboots.
 
-## Konfiguration och filer
+## Configuration and files
 
-| Sökväg | Innehåll |
+| Path | Contents |
 | --- | --- |
-| `~/.local/bin/adb-tray` | Programmet |
-| `~/.config/adb-tray/hosts.json` | Senast använda Wi-Fi-adresser (max 10) |
-| `~/.config/adb-tray/scrcpy-*.log` | Utdata från senaste speglingen per enhet |
-| `~/.config/autostart/adb-tray.desktop` | Autostart vid inloggning |
+| `~/.local/bin/adb-tray` | The program |
+| `~/.config/adb-tray/hosts.json` | Recently used Wi-Fi addresses (max 10) |
+| `~/.config/adb-tray/scrcpy-*.log` | Output of the latest mirroring session per device |
+| `~/.config/autostart/adb-tray.desktop` | Autostart at login |
 
-Standardflaggorna för `scrcpy` (`-m 1600 --stay-awake`, plus `-b 6M` över Wi-Fi) finns i `SCRCPY_OPTS`
-överst i `adb-tray.py`.
+The default `scrcpy` flags (`-m 1600 --stay-awake`, plus `-b 6M` over Wi-Fi) are in `SCRCPY_OPTS`
+at the top of `adb-tray.py`.
 
-## Felsökning
+## Troubleshooting
 
-| Symptom | Åtgärd |
+| Symptom | Fix |
 | --- | --- |
-| Ingen ikon syns | Kontrollera att *Xapp Status Applet* finns i panelen. Starta `adb-tray` i en terminal och läs utskriften. |
-| Enheten visas som *godkänn på enheten* | Tryck **Tillåt** i dialogen på enheten. Syns ingen dialog: välj *Återkalla USB-felsökningsbehörigheter* i utvecklaralternativen och anslut igen. |
-| Speglingen stängs direkt | Läs `~/.config/adb-tray/scrcpy-*.log`. Vissa enheter klarar inte full upplösning – sänk `-m` i `SCRCPY_OPTS`. |
-| Wi-Fi-anslutningen misslyckas | Enheten har troligen startats om. Anslut via USB och välj *Växla till Wi-Fi* igen, eller använd parning. |
-| Allt verkar hänga | Välj **Starta om adb-server** i menyn. |
-| `Failed to load module "xapp-gtk3-module"` | Ofarligt meddelande, kan ignoreras. |
+| No icon is shown | Make sure the *Xapp Status Applet* is in your panel. Run `adb-tray` in a terminal and read the output. |
+| Device is shown as *godkänn på enheten* (authorize on device) | Tap **Allow** in the dialog on the device. If no dialog appears, choose *Revoke USB debugging authorizations* in developer options and reconnect. |
+| Mirroring closes immediately | Read `~/.config/adb-tray/scrcpy-*.log`. Some devices cannot encode full resolution – lower `-m` in `SCRCPY_OPTS`. |
+| Wi-Fi connection fails | The device has probably rebooted. Connect over USB and choose *Switch to Wi-Fi* again, or use pairing. |
+| Everything seems stuck | Choose **Restart adb server** (*Starta om adb-server*) in the menu. |
+| `Failed to load module "xapp-gtk3-module"` | Harmless message, can be ignored. |
 
-## Avinstallation
+## Uninstall
 
 ```bash
 ./uninstall.sh
 ```
 
-Inställningarna i `~/.config/adb-tray/` lämnas kvar.
+Settings in `~/.config/adb-tray/` are kept.
 
-## Bidra
+## Contributing
 
-Bidrag tas emot via pull requests. Läs [CONTRIBUTING.md](CONTRIBUTING.md) först.
-Säkerhetsproblem rapporteras enligt [SECURITY.md](SECURITY.md).
+Contributions are welcome through pull requests. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+Report security issues as described in [SECURITY.md](SECURITY.md).
 
-## Licens
+## License
 
 [MIT](LICENSE) © Anders Elmén

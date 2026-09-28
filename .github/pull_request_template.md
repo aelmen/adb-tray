@@ -1,21 +1,21 @@
-## Vad ändras och varför
+## What changes and why
 
-<!-- Kort beskrivning. Länka ärendet, t.ex. "Fixes #12". -->
+<!-- Short description. Link the issue, e.g. "Fixes #12". -->
 
-## Typ av ändring
+## Type of change
 
-- [ ] Buggrättning
-- [ ] Ny funktion
-- [ ] Dokumentation
-- [ ] Övrigt (CI, städning)
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation
+- [ ] Other (CI, cleanup)
 
-## Testat
+## Tested
 
-- [ ] `ruff check adb-tray.py`, `python3 -m py_compile adb-tray.py` och `shellcheck install.sh uninstall.sh` går igenom
-- [ ] Manuellt testat i Cinnamon med en riktig enhet
+- [ ] `ruff check adb-tray.py`, `python3 -m py_compile adb-tray.py` and `shellcheck install.sh uninstall.sh` pass
+- [ ] Manually tested in Cinnamon with a real device
 
-Miljö (distribution, Cinnamon, enhet/Android-version):
+Environment (distribution, Cinnamon, device/Android version):
 
-## Skärmdumpar
+## Screenshots
 
-<!-- Om menyn eller beteendet ändras visuellt. -->
+<!-- If the menu or behaviour changes visually. -->

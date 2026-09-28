@@ -1,46 +1,46 @@
-# Bidra till adb-tray
+# Contributing to adb-tray
 
-Tack för att du vill bidra! Det här dokumentet beskriver hur ändringar tas emot.
+Thanks for wanting to contribute! This document describes how changes are accepted.
 
-## Arbetsflöde
+## Workflow
 
-`main` är skyddad. Alla ändringar görs via **pull request** och slås ihop av underhållaren
-([@aelmen](https://github.com/aelmen)). Det går inte att pusha direkt till `main`.
+`main` is protected. All changes go through a **pull request** and are merged by the maintainer
+([@aelmen](https://github.com/aelmen)). Pushing directly to `main` is not possible.
 
-1. **Forka** repot (eller skapa en gren om du har skrivrättighet).
-2. Skapa en gren från `main` med ett beskrivande namn, till exempel `feat/wifi-qr-pairing` eller
+1. **Fork** the repository.
+2. Create a branch from `main` with a descriptive name, e.g. `feat/wifi-qr-pairing` or
    `fix/offline-device-label`.
-3. Gör små, fokuserade commits (se [Commit-meddelanden](#commit-meddelanden)).
-4. Kör kontrollerna lokalt (se [Kontroller](#kontroller)).
-5. Öppna en pull request mot `main` och fyll i mallen.
-6. CI måste vara grönt och underhållaren måste godkänna innan ändringen slås ihop.
-   PR:er slås ihop med **squash merge**.
+3. Make small, focused commits (see [Commit messages](#commit-messages)).
+4. Run the checks locally (see [Checks](#checks)).
+5. Open a pull request against `main` and fill in the template.
+6. CI must be green and the maintainer must approve before the change is merged.
+   Pull requests are merged with **squash merge**.
 
-Större ändringar eller nya funktioner: öppna gärna ett ärende först så att vi kan diskutera
-upplägget innan du lägger tid på det.
+For larger changes or new features, please open an issue first so we can agree on the approach
+before you spend time on it.
 
-## Utvecklingsmiljö
+## Development setup
 
 ```bash
 sudo apt install adb scrcpy python3-gi gir1.2-gtk-3.0 gir1.2-xapp-1.0 libnotify-bin shellcheck
-pipx install ruff        # eller: pip install --user ruff
+pipx install ruff        # or: python3 -m venv .venv && .venv/bin/pip install ruff
 
-git clone https://github.com/<ditt-konto>/adb-tray.git
+git clone https://github.com/<your-account>/adb-tray.git
 cd adb-tray
 ```
 
-Kör programmet direkt från källkoden, utan att installera:
+Run the program straight from source, without installing:
 
 ```bash
-pkill -f 'adb-tray(\.py)?$'   # stoppa en eventuell installerad instans
+pkill -f 'adb-tray(\.py)?$'   # stop an installed instance, if any
 ./adb-tray.py
 ```
 
-Programmet tillåter bara en instans åt gången (lås i `~/.config/adb-tray/tray.lock`).
+Only one instance can run at a time (lock file `~/.config/adb-tray/tray.lock`).
 
-## Kontroller
+## Checks
 
-Samma kontroller körs i CI på varje pull request:
+The same checks run in CI on every pull request:
 
 ```bash
 ruff check adb-tray.py
@@ -48,26 +48,26 @@ python3 -m py_compile adb-tray.py
 shellcheck install.sh uninstall.sh
 ```
 
-Testa dessutom manuellt i Cinnamon med minst en riktig enhet:
+Also test manually in Cinnamon with at least one real device:
 
-- [ ] Ikonen visas och menyn öppnas med höger- och vänsterklick
-- [ ] USB-enhet listas, spegling startar och stoppar
-- [ ] Wi-Fi: *Växla till Wi-Fi* och återanslutning via sparad adress
-- [ ] `./install.sh` och `./uninstall.sh` fungerar
+- [ ] The icon appears and the menu opens on left and right click
+- [ ] A USB device is listed, mirroring starts and stops
+- [ ] Wi-Fi: *Switch to Wi-Fi* and reconnecting via a saved address
+- [ ] `./install.sh` and `./uninstall.sh` work
 
-## Kodstil
+## Code style
 
-- Python 3, standardbiblioteket + PyGObject. Lägg inte till nya beroenden utan att diskutera det först.
-- GTK-anrop görs bara i huvudtråden. Blockerande arbete (`adb`, nätverk) körs i en bakgrundstråd via
-  `run_bg`, och resultat skickas tillbaka med `GLib.idle_add`.
-- Anropa externa program med argumentlistor (`subprocess.run([...])`), aldrig via ett skal med
-  sammansatta strängar.
-- Texter i gränssnittet är på svenska. Kod, kommentarer och commit-meddelanden på engelska.
-- Kommentera *varför*, inte *vad*.
+- Python 3, standard library + PyGObject. Do not add new dependencies without discussing it first.
+- GTK calls happen on the main thread only. Blocking work (`adb`, network) runs on a background thread via
+  `run_bg`, and results are handed back with `GLib.idle_add`.
+- Call external programs with argument lists (`subprocess.run([...])`), never through a shell with
+  concatenated strings.
+- UI strings are currently in Swedish. Code, comments, commit messages and documentation are in English.
+- Comment *why*, not *what*. Lint rules are defined in `ruff.toml`.
 
-## Commit-meddelanden
+## Commit messages
 
-Vi använder [Conventional Commits](https://www.conventionalcommits.org/):
+We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```text
 feat: add QR code pairing
@@ -76,21 +76,21 @@ docs: clarify wireless debugging steps
 chore: bump CI actions
 ```
 
-## Rapportera buggar och önska funktioner
+## Reporting bugs and requesting features
 
-Använd ärendemallarna under **Issues → New issue**. Ta med:
+Use the issue templates under **Issues → New issue**. Include:
 
-- distribution och version av Cinnamon
-- `adb version` och `scrcpy --version`
-- enhetens modell och Android-version
-- relevanta rader ur `~/.config/adb-tray/scrcpy-*.log` eller utskriften från `./adb-tray.py`
+- distribution and Cinnamon version
+- `adb version` and `scrcpy --version`
+- device model and Android version
+- relevant lines from `~/.config/adb-tray/scrcpy-*.log` or the output of `./adb-tray.py`
 
-Säkerhetsproblem ska **inte** rapporteras som öppna ärenden – se [SECURITY.md](SECURITY.md).
+Do **not** report security issues as public issues – see [SECURITY.md](SECURITY.md).
 
-## Uppförande
+## Code of conduct
 
-Projektet följer [uppförandekoden](CODE_OF_CONDUCT.md). Genom att delta förväntas du följa den.
+This project follows the [Code of Conduct](CODE_OF_CONDUCT.md). By participating you are expected to uphold it.
 
-## Licens
+## License
 
-Genom att skicka in ett bidrag godkänner du att det licensieras under projektets [MIT-licens](LICENSE).
+By submitting a contribution you agree that it is licensed under the project's [MIT License](LICENSE).

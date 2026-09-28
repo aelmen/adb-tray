@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Säkerhetsproblem
+  - name: Security issue
     url: https://github.com/aelmen/adb-tray/security/advisories/new
-    about: Rapportera sårbarheter privat, inte som öppna ärenden.
+    about: Report vulnerabilities privately, not as public issues.

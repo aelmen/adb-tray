@@ -1,44 +1,44 @@
-name: Buggrapport
-description: Något fungerar inte som det ska
+name: Bug report
+description: Something does not work as expected
 labels: [bug]
 body:
   - type: textarea
     id: what
     attributes:
-      label: Vad hände?
-      description: Beskriv vad du gjorde, vad du förväntade dig och vad som hände.
+      label: What happened?
+      description: Describe what you did, what you expected and what happened instead.
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Steg för att återskapa
+      label: Steps to reproduce
       placeholder: |
-        1. Anslut enheten via USB
-        2. Välj "Spegla skärmen"
+        1. Connect the device over USB
+        2. Choose "Mirror screen"
         3. ...
     validations:
       required: true
   - type: input
     id: desktop
     attributes:
-      label: Distribution och Cinnamon-version
+      label: Distribution and Cinnamon version
       placeholder: Linux Mint 22.2, Cinnamon 6.4
     validations:
       required: true
   - type: input
     id: tools
     attributes:
-      label: adb- och scrcpy-version
+      label: adb and scrcpy versions
       placeholder: "adb 1.0.41, scrcpy 3.3.4"
   - type: input
     id: device
     attributes:
-      label: Enhet och Android-version
+      label: Device and Android version
       placeholder: Samsung SM-X210, Android 16
   - type: textarea
     id: logs
     attributes:
-      label: Loggar
-      description: Utskrift från `./adb-tray.py` eller innehållet i `~/.config/adb-tray/scrcpy-*.log`.
+      label: Logs
+      description: Output of `./adb-tray.py` or the contents of `~/.config/adb-tray/scrcpy-*.log`.
       render: text

@@ -1,13 +1,13 @@
-# Uppförandekod
+# Code of Conduct
 
-Projektet följer [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
+This project follows the [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
 
-Kort sagt: var vänlig och respektfull, välkomna nya bidragsgivare, kritisera idéer och inte personer,
-och acceptera att underhållaren fattar det slutliga beslutet om vad som tas in.
+In short: be kind and respectful, welcome newcomers, criticize ideas rather than people,
+and accept that the maintainer makes the final call on what gets merged.
 
-Trakasserier, förolämpningar eller annat kränkande beteende accepteras inte. Underhållaren kan ta bort
-kommentarer, commits och ärenden som bryter mot uppförandekoden, och kan tillfälligt eller permanent
-stänga ute deltagare.
+Harassment, insults or other abusive behaviour are not tolerated. The maintainer may remove
+comments, commits and issues that violate this code of conduct, and may temporarily or permanently
+ban participants.
 
-Rapportera överträdelser privat till underhållaren via GitHub ([@aelmen](https://github.com/aelmen)).
-Alla rapporter behandlas konfidentiellt.
+Report violations privately to the maintainer via GitHub ([@aelmen](https://github.com/aelmen)).
+All reports are handled confidentially.

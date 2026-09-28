@@ -1,26 +1,26 @@
-# Säkerhetspolicy
+# Security Policy
 
-## Versioner som stöds
+## Supported versions
 
-Endast senaste versionen på `main` får säkerhetsrättningar.
+Only the latest version on `main` receives security fixes.
 
-## Rapportera en sårbarhet
+## Reporting a vulnerability
 
-Rapportera **inte** säkerhetsproblem som öppna ärenden eller pull requests.
+Please do **not** report security issues as public issues or pull requests.
 
-Använd i stället GitHubs privata rapportering: **Security → Report a vulnerability** i repot.
-Beskriv problemet, hur det kan återskapas och vilken påverkan du ser.
+Use GitHub's private reporting instead: **Security → Report a vulnerability** in this repository.
+Describe the problem, how to reproduce it and the impact you see.
 
-Du får en bekräftelse inom en vecka. När en rättning finns publiceras den tillsammans med ett
-säkerhetsmeddelande, och du krediteras om du vill.
+You will get an acknowledgement within a week. Once a fix is available it is published together with a
+security advisory, and you are credited if you wish.
 
-## Omfattning
+## Scope
 
-adb-tray kör `adb` och `scrcpy` med dina användarrättigheter och ansluter till de adresser du anger.
-Relevanta problem är till exempel:
+adb-tray runs `adb` and `scrcpy` with your user privileges and connects to the addresses you enter.
+Relevant issues include, for example:
 
-- kommandoinjektion via enhetsnamn, serienummer eller adresser
-- att filer skrivs utanför `~/.config/adb-tray/` eller bildmappen
-- att installationsskripten gör något annat än det som dokumenteras
+- command injection through device names, serial numbers or addresses
+- files being written outside `~/.config/adb-tray/` or the Pictures folder
+- the install scripts doing anything other than what is documented
 
-Säkerheten i själva `adb`-protokollet och i `scrcpy` hanteras av respektive projekt.
+The security of the `adb` protocol itself and of `scrcpy` is handled by those projects.

@@ -1,21 +1,21 @@
-name: Funktionsönskemål
-description: Föreslå en ny funktion eller förbättring
+name: Feature request
+description: Suggest a new feature or improvement
 labels: [enhancement]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: Vilket problem vill du lösa?
+      label: What problem do you want to solve?
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Förslag
-      description: Hur skulle det kunna fungera i menyn?
+      label: Proposal
+      description: How could it work in the menu?
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternativ du har övervägt
+      label: Alternatives you have considered
