@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=ADB-enheter
-Comment=Ikon i systemfältet för adb-enheter och scrcpy-spegling
+Name=ADB Devices
+Comment=System tray icon for adb devices and scrcpy screen mirroring
 Exec=@EXEC@
 Icon=scrcpy
 Terminal=false

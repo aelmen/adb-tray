@@ -2,6 +2,7 @@
 """System tray icon for adb devices and scrcpy mirroring (Cinnamon / XApp)."""
 import contextlib
 import fcntl
+import gettext
 import json
 import re
 import shlex
@@ -19,7 +20,15 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("XApp", "1.0")
 from gi.repository import GLib, Gtk, XApp  # noqa: E402
 
-APP = "ADB-enheter"
+DOMAIN = "adb-tray"
+_LOCALE_DIR = Path.home() / ".local" / "share" / "locale"
+# gettext picks the language from LANGUAGE / LC_ALL / LC_MESSAGES / LANG, like the rest of the desktop.
+_translation = gettext.translation(
+    DOMAIN, localedir=_LOCALE_DIR if gettext.find(DOMAIN, _LOCALE_DIR) else None, fallback=True)
+_ = _translation.gettext
+ngettext = _translation.ngettext
+
+APP = _("ADB Devices")
 ICON = "scrcpy"
 POLL_SECONDS = 4
 TCP_PORT = 5555
@@ -43,7 +52,7 @@ def notify(msg):
 
 
 def list_devices():
-    _, out = adb("devices", "-l", timeout=10)
+    _rc, out = adb("devices", "-l", timeout=10)
     devices = []
     for line in out.splitlines():
         if not line.strip() or line.startswith(("List of", "*")):
@@ -81,11 +90,13 @@ def save_host(host):
 
 
 def connect_host(host):
-    _, out = adb("connect", host, timeout=10)
+    _rc, out = adb("connect", host, timeout=10)
     ok = "connected to" in out and "failed" not in out
     if ok:
         save_host(host)
-    notify(f"Ansluten till {host}" if ok else f"Kunde inte ansluta till {host}\n{out}")
+        notify(_("Connected to {host}").format(host=host))
+    else:
+        notify(_("Could not connect to {host}").format(host=host) + f"\n{out}")
 
 
 class Tray:
@@ -119,8 +130,12 @@ class Tray:
         self.devices = devices
         self.mirrors = {s: p for s, p in self.mirrors.items() if p.poll() is None}
         ready = [d for d in devices if d["state"] == "device"]
-        self.icon.set_tooltip_text(f"{APP}: {len(ready)} ansluten/anslutna"
-                                   + (f", {len(self.mirrors)} speglas" if self.mirrors else ""))
+        tooltip = f"{APP}: " + ngettext("{n} device connected", "{n} devices connected",
+                                         len(ready)).format(n=len(ready))
+        if self.mirrors:
+            tooltip += ", " + ngettext("{n} mirroring", "{n} mirroring",
+                                       len(self.mirrors)).format(n=len(self.mirrors))
+        self.icon.set_tooltip_text(tooltip)
         signature = (tuple((d["serial"], d["state"], d["model"]) for d in devices),
                      tuple(sorted(self.mirrors)), tuple(load_hosts()))
         if signature != self.signature and not (self.menu and self.menu.get_visible()):
@@ -146,27 +161,27 @@ class Tray:
     def rebuild(self):
         menu = Gtk.Menu()
         if not self.devices:
-            menu.append(self.item("Inga enheter anslutna"))
+            menu.append(self.item(_("No devices connected")))
         for dev in self.devices:
             menu.append(self.device_item(dev))
 
         menu.append(Gtk.SeparatorMenuItem())
-        wifi = Gtk.MenuItem(label="Anslut via Wi-Fi")
+        wifi = Gtk.MenuItem(label=_("Connect via Wi-Fi"))
         sub = Gtk.Menu()
         connected = {d["serial"] for d in self.devices}
         for host in load_hosts():
             sub.append(self.item(host, self.run_bg, connect_host, host, sensitive=host not in connected))
         if load_hosts():
             sub.append(Gtk.SeparatorMenuItem())
-        sub.append(self.item("Ny adress…", self.dialog_connect))
-        sub.append(self.item("Para ihop (trådlös felsökning)…", self.dialog_pair))
+        sub.append(self.item(_("New address..."), self.dialog_connect))
+        sub.append(self.item(_("Pair (wireless debugging)..."), self.dialog_pair))
         wifi.set_submenu(sub)
         menu.append(wifi)
 
-        menu.append(self.item("Uppdatera", self.poll))
-        menu.append(self.item("Starta om adb-server", self.run_bg, self.restart_server))
+        menu.append(self.item(_("Refresh"), self.poll))
+        menu.append(self.item(_("Restart adb server"), self.run_bg, self.restart_server))
         menu.append(Gtk.SeparatorMenuItem())
-        menu.append(self.item("Avsluta", Gtk.main_quit))
+        menu.append(self.item(_("Quit"), Gtk.main_quit))
         menu.show_all()
 
         self.menu = menu
@@ -179,33 +194,34 @@ class Tray:
         label = f"{name}  ({'Wi-Fi' if dev['wifi'] else 'USB'})"
         if serial in self.mirrors:
             label = "▶ " + label
-        state_text = {"unauthorized": " – godkänn på enheten", "offline": " – offline"}
-        label += state_text.get(dev["state"], "" if dev["state"] == "device" else f" – {dev['state']}")
+        state_text = {"unauthorized": _("authorize on device"), "offline": _("offline")}
+        if dev["state"] != "device":
+            label += " – " + state_text.get(dev["state"], dev["state"])
 
         top = Gtk.MenuItem(label=label)
         sub = Gtk.Menu()
         if dev["state"] == "device":
             if serial in self.mirrors:
-                sub.append(self.item("Stoppa spegling", self.stop_mirror, serial))
+                sub.append(self.item(_("Stop mirroring"), self.stop_mirror, serial))
             else:
-                sub.append(self.item("Spegla skärmen", self.start_mirror, dev))
+                sub.append(self.item(_("Mirror screen"), self.start_mirror, dev))
             sub.append(Gtk.SeparatorMenuItem())
-            sub.append(self.item("Lås porträtt", self.run_bg, self.set_rotation, serial, 0))
-            sub.append(self.item("Lås landskap", self.run_bg, self.set_rotation, serial, 1))
-            sub.append(self.item("Autorotation", self.run_bg, self.set_rotation, serial, None))
+            sub.append(self.item(_("Lock portrait"), self.run_bg, self.set_rotation, serial, 0))
+            sub.append(self.item(_("Lock landscape"), self.run_bg, self.set_rotation, serial, 1))
+            sub.append(self.item(_("Auto-rotate"), self.run_bg, self.set_rotation, serial, None))
             sub.append(Gtk.SeparatorMenuItem())
-            sub.append(self.item("Skärmdump", self.run_bg, self.screenshot, dev))
-            sub.append(self.item("Öppna adb shell", self.open_shell, serial))
+            sub.append(self.item(_("Screenshot"), self.run_bg, self.screenshot, dev))
+            sub.append(self.item(_("Open adb shell"), self.open_shell, serial))
             if dev["wifi"]:
-                sub.append(self.item("Koppla från", self.run_bg, self.disconnect, serial))
+                sub.append(self.item(_("Disconnect"), self.run_bg, self.disconnect, serial))
             else:
-                sub.append(self.item("Växla till Wi-Fi", self.run_bg, self.switch_to_wifi, serial))
+                sub.append(self.item(_("Switch to Wi-Fi"), self.run_bg, self.switch_to_wifi, serial))
         elif dev["state"] == "unauthorized":
-            sub.append(self.item("Tryck på 'Tillåt' i dialogen på enheten"))
+            sub.append(self.item(_("Tap 'Allow' in the dialog on the device")))
         if dev["wifi"] and dev["state"] != "device":
-            sub.append(self.item("Koppla från", self.run_bg, self.disconnect, serial))
+            sub.append(self.item(_("Disconnect"), self.run_bg, self.disconnect, serial))
         sub.append(Gtk.SeparatorMenuItem())
-        sub.append(self.item(f"Serienummer: {serial}"))
+        sub.append(self.item(_("Serial number: {serial}").format(serial=serial)))
         top.set_submenu(sub)
         return top
 
@@ -225,7 +241,7 @@ class Tray:
         def watch():
             code = proc.wait()
             if code != 0 and time.monotonic() - started < 10:
-                notify(f"scrcpy avslutades med fel ({code}). Se {log}")
+                notify(_("scrcpy exited with an error ({code}). See {log}").format(code=code, log=log))
             GLib.idle_add(self.poll)
 
         threading.Thread(target=watch, daemon=True).start()
@@ -251,25 +267,25 @@ class Tray:
         r = subprocess.run(["adb", "-s", dev["serial"], "exec-out", "screencap", "-p"],
                            capture_output=True, timeout=30, check=False)
         if r.returncode != 0 or not r.stdout:
-            notify("Skärmdumpen misslyckades")
+            notify(_("Screenshot failed"))
             return
         target.write_bytes(r.stdout)
-        notify(f"Skärmdump sparad: {target}")
+        notify(_("Screenshot saved: {path}").format(path=target))
 
     @staticmethod
     def open_shell(serial):
         term = shutil.which("x-terminal-emulator") or shutil.which("gnome-terminal")
         if not term:
-            notify("Hittar ingen terminal")
+            notify(_("No terminal emulator found"))
             return
         subprocess.Popen([term, "-e", shlex.join(["adb", "-s", serial, "shell"])])
 
     @staticmethod
     def switch_to_wifi(serial):
-        _, out = adb("shell", "ip", "-f", "inet", "addr", "show", "wlan0", serial=serial)
+        _rc, out = adb("shell", "ip", "-f", "inet", "addr", "show", "wlan0", serial=serial)
         match = re.search(r"inet (\d+\.\d+\.\d+\.\d+)", out)
         if not match:
-            notify("Enheten verkar inte vara ansluten till Wi-Fi")
+            notify(_("The device does not seem to be connected to Wi-Fi"))
             return
         adb("tcpip", str(TCP_PORT), serial=serial)
         time.sleep(2)
@@ -278,19 +294,19 @@ class Tray:
     @staticmethod
     def disconnect(serial):
         adb("disconnect", serial)
-        notify(f"Frånkopplad: {serial}")
+        notify(_("Disconnected: {serial}").format(serial=serial))
 
     @staticmethod
     def restart_server():
         adb("kill-server")
         adb("start-server")
-        notify("adb-servern har startats om")
+        notify(_("The adb server has been restarted"))
 
     # ---- dialogs -------------------------------------------------------
     @staticmethod
     def ask(title, fields):
         dialog = Gtk.Dialog(title=title, flags=Gtk.DialogFlags.MODAL)
-        dialog.add_buttons("Avbryt", Gtk.ResponseType.CANCEL, "OK", Gtk.ResponseType.OK)
+        dialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL, _("OK"), Gtk.ResponseType.OK)
         dialog.set_default_response(Gtk.ResponseType.OK)
         dialog.set_keep_above(True)
         grid = Gtk.Grid(column_spacing=8, row_spacing=6, margin=12)
@@ -309,26 +325,26 @@ class Tray:
 
     def dialog_connect(self):
         hosts = load_hosts()
-        values = self.ask("Anslut via Wi-Fi", [("Adress (IP:port)", hosts[0] if hosts else "")])
+        values = self.ask(_("Connect via Wi-Fi"), [(_("Address (IP:port)"), hosts[0] if hosts else "")])
         if values and values[0]:
             host = values[0] if ":" in values[0] else f"{values[0]}:{TCP_PORT}"
             self.run_bg(connect_host, host)
 
     def dialog_pair(self):
-        values = self.ask("Para ihop – trådlös felsökning", [
-            ("Parningsadress (IP:port)", ""),
-            ("Parningskod", ""),
-            ("Anslutningsadress (valfri)", ""),
+        values = self.ask(_("Pair - wireless debugging"), [
+            (_("Pairing address (IP:port)"), ""),
+            (_("Pairing code"), ""),
+            (_("Connection address (optional)"), ""),
         ])
         if not values or not values[0] or not values[1]:
             return
 
         def pair(address, code, connect_to):
-            _, out = adb("pair", address, code, timeout=20)
+            _rc, out = adb("pair", address, code, timeout=20)
             if "Successfully paired" not in out:
-                notify(f"Parningen misslyckades\n{out}")
+                notify(_("Pairing failed") + f"\n{out}")
                 return
-            notify("Parningen lyckades")
+            notify(_("Pairing succeeded"))
             if connect_to:
                 connect_host(connect_to)
 
@@ -337,7 +353,7 @@ class Tray:
 
 def main():
     if not shutil.which("adb"):
-        print("adb saknas", file=sys.stderr)
+        print(_("adb is not installed"), file=sys.stderr)
         sys.exit(1)
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     # Kept open for the process lifetime; the flock is the single-instance guard.
@@ -345,7 +361,7 @@ def main():
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:
-        print("adb-tray körs redan", file=sys.stderr)
+        print(_("adb-tray is already running"), file=sys.stderr)
         sys.exit(0)
     adb("start-server")
     Tray()
