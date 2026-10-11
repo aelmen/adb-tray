@@ -1,0 +1,146 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "ADB Devices"
+msgstr ""
+
+#, python-brace-format
+msgid "Connected to {host}"
+msgstr ""
+
+#, python-brace-format
+msgid "Could not connect to {host}"
+msgstr ""
+
+#, python-brace-format
+msgid "{n} device connected"
+msgid_plural "{n} devices connected"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-brace-format
+msgid "{n} mirroring"
+msgid_plural "{n} mirroring"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "No devices connected"
+msgstr ""
+
+msgid "Connect via Wi-Fi"
+msgstr ""
+
+msgid "New address..."
+msgstr ""
+
+msgid "Pair (wireless debugging)..."
+msgstr ""
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Restart adb server"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "authorize on device"
+msgstr ""
+
+msgid "offline"
+msgstr ""
+
+msgid "Stop mirroring"
+msgstr ""
+
+msgid "Mirror screen"
+msgstr ""
+
+msgid "Lock portrait"
+msgstr ""
+
+msgid "Lock landscape"
+msgstr ""
+
+msgid "Auto-rotate"
+msgstr ""
+
+msgid "Screenshot"
+msgstr ""
+
+msgid "Open adb shell"
+msgstr ""
+
+msgid "Disconnect"
+msgstr ""
+
+msgid "Switch to Wi-Fi"
+msgstr ""
+
+msgid "Tap 'Allow' in the dialog on the device"
+msgstr ""
+
+#, python-brace-format
+msgid "Serial number: {serial}"
+msgstr ""
+
+#, python-brace-format
+msgid "scrcpy exited with an error ({code}). See {log}"
+msgstr ""
+
+msgid "Screenshot failed"
+msgstr ""
+
+#, python-brace-format
+msgid "Screenshot saved: {path}"
+msgstr ""
+
+msgid "No terminal emulator found"
+msgstr ""
+
+msgid "The device does not seem to be connected to Wi-Fi"
+msgstr ""
+
+#, python-brace-format
+msgid "Disconnected: {serial}"
+msgstr ""
+
+msgid "The adb server has been restarted"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Address (IP:port)"
+msgstr ""
+
+msgid "Pair - wireless debugging"
+msgstr ""
+
+msgid "Pairing address (IP:port)"
+msgstr ""
+
+msgid "Pairing code"
+msgstr ""
+
+msgid "Connection address (optional)"
+msgstr ""
+
+msgid "Pairing failed"
+msgstr ""
+
+msgid "Pairing succeeded"
+msgstr ""
+
+msgid "adb is not installed"
+msgstr ""
+
+msgid "adb-tray is already running"
+msgstr ""
+
+msgid "System tray icon for adb devices and scrcpy screen mirroring"
+msgstr ""

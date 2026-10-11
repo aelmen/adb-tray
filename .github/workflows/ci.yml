@@ -29,10 +29,16 @@ jobs:
         run: python -m py_compile adb-tray.py
 
       - name: ShellCheck
-        run: shellcheck install.sh uninstall.sh
+        run: shellcheck install.sh uninstall.sh po/update.sh
+
+      - name: Translations
+        run: |
+          sudo apt-get install -y --no-install-recommends gettext desktop-file-utils
+          for po in po/*.po; do msgfmt --check --statistics -o /dev/null "$po"; done
+          po/update.sh --check
 
       - name: Desktop file template
         run: |
-          sudo apt-get install -y --no-install-recommends desktop-file-utils
-          sed 's|@EXEC@|/usr/local/bin/adb-tray|' adb-tray.desktop.in > /tmp/adb-tray.desktop
+          sed 's|@EXEC@|/usr/local/bin/adb-tray|' adb-tray.desktop.in \
+            | msgfmt --desktop --template=/dev/stdin -d po -o /tmp/adb-tray.desktop
           desktop-file-validate /tmp/adb-tray.desktop
